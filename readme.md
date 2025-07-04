@@ -59,14 +59,26 @@ Built with **Python (Flask)**, it allows voters to securely register, cast encry
 
 ---
 
+### 🧑‍💼 User Panel
+<img src="uploads/Screenshot_user.png" width="600"/>
+
+---
+
+
 ### 📈 Encrypted Vote Count View
-<img src="uploads/Screenshot_result.png" width="600"/>
+<img src="uploads/Screenshot_result_pannel.png" width="600"/>
 
 ---
 
-### 🧾 Vote Confirmation
-<img src="uploads/IMG_vote_preview.jpg" width="600"/>
+### 🧾 Admin Analytics
+<img src="uploads/Screenshot_admin_analytics.png" width="600"/>
 
 ---
+
+### 🧾 Admin Mass Registration
+<img src="uploads/Screenshot_admin_massregistration.png" width="600"/>
+
+---
+
 
 
