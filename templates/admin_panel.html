@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - Online Voting System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_panel.css') }}">
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="sidebar">
+        <div class="image"></div>
+        <h2 class="side-h2">Admin Panel</h2>
+        <ul>
+            <li><a href="#" id="add">Add Candidates</a></li>
+            <li><a href="#" id="list">List Candidates</a></li>
+            <li><a href="#" id="Analytics">Analytics</a></li>
+            <li><a href="#" id="delete">Delete-record</a></li>
+            <li><a href="#" id="mass-registration">Mass Registration</a></li>
+            <li><a href="{{url_for('logout')}}" id="log-out">Log-out</a></li>
+        </ul>
+    </div>
+
+    <div class="add_candidate" id="targetDiv" style="display: none;">
+        <h1>Add Candidate</h1>
+        <form action="/add_candidate" method="POST" id="candidateForm" enctype="multipart/form-data">
+            <input type="text" name="candidate_name" placeholder="Candidate Name" required><br><br>
+            <input type="text" name="age" placeholder="Age" required><br><br>
+            <input type="text" name="sex" placeholder="Sex" required><br><br>
+            <input type="text" name="area" placeholder="Area" required><br><br>
+            <input type="text" name="party" placeholder="Party" required><br><br>
+            <textarea type="text" name="agenda" placeholder="Agenda (Max 300 Characters)" maxlength="300" required></textarea><br><br>
+            <textarea type="text" name="description" placeholder="Description (Max 300 Characters)" maxlength="300" required></textarea><br><br>
+            Candidate image:<input type="file" name="candidate_image" accept="image/*"><br><br>
+            <input type="submit" value="Add Candidate">
+        </form>
+    </div>
+
+    <div class="list_candidate" id="targetDiv1" style="display: none;"></div>
+
+    <div class="delete-record" id="targetDiv2" style="display: none;">
+        <h1>Delete Candidate</h1>
+        <input type="number" class="dinput" id="id" placeholder="Enter Candidate ID"><br><br>
+        <button class="delete" id="delete" onclick="clicked()">Delete</button>
+    </div>
+
+    <div class="analytics" id="analytics-div" style="display: none;">
+        <h2>Analytics</h2>
+        <div class="div1">
+            <h3>Total Voters: <span id="total-voters">Loading...</span></h3>
+        </div>
+        <div class="div2">
+            <h3>Total Candidates: <span id="total-candidates">Loading...</span></h3>
+        </div>
+    </div>
+
+    <div class="mass_registration" id="massRegDiv" style="display: none;">
+        <h2>Mass Registration</h2>
+        <form action="/mass_register" method="POST" enctype="multipart/form-data">
+            <input type="file" class="xcel" name="file" accept=".xlsx, .xls" required><br><br>
+            <input type="submit" value="Upload and Register">
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var add = document.getElementById('add');
+            var list = document.getElementById('list');
+            var delet = document.getElementById('delete');
+            var analytics = document.getElementById('Analytics');
+            var massReg = document.getElementById('mass-registration');
+
+            var targetDiv = document.getElementById('targetDiv');
+            var targetDiv1 = document.getElementById('targetDiv1');
+            var targetDiv2 = document.getElementById('targetDiv2');
+            var analyticsDiv = document.getElementById('analytics-div');
+            var massRegDiv = document.getElementById('massRegDiv');
+
+            add.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default link behavior (jumping to the top of the page)
+
+                // Toggle the visibility of the target div
+                if (targetDiv2.style.display != 'none')
+                    targetDiv2.style.display = 'none'
+                if (targetDiv1.style.display != 'none')
+                    targetDiv1.style.display = 'none'
+                if (analyticsDiv.style.display != 'none')
+                    analyticsDiv.style.display = 'none'
+                if (massRegDiv.style.display != 'none')
+                    massRegDiv.style.display = 'none'
+                if (targetDiv.style.display === 'none') {
+                    targetDiv.style.display = 'block';
+                } else {
+                    targetDiv.style.display = 'none';
+                }
+            });
+
+            list.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default link behavior (jumping to the top of the page)
+
+                // Toggle the visibility of the target div
+                if (targetDiv2.style.display != 'none')
+                    targetDiv2.style.display = 'none'
+                if (targetDiv.style.display != 'none')
+                    targetDiv.style.display = 'none'
+                if (analyticsDiv.style.display != 'none')
+                    analyticsDiv.style.display = 'none'
+                if (massRegDiv.style.display != 'none')
+                    massRegDiv.style.display = 'none'
+                if (targetDiv1.style.display === 'none') {
+                    targetDiv1.style.display = 'block';
+                    updateCandidatesList();
+                } else {
+                    targetDiv1.style.display = 'none';
+                }
+            });
+
+
+            delet.addEventListener('click', function (event) {
+                event.preventDefault(); // Prevent the default link behavior (jumping to the top of the page)
+
+                // Toggle the visibility of the target div
+                if (targetDiv1.style.display != 'none')
+                    targetDiv1.style.display = 'none'
+                if (targetDiv.style.display != 'none')
+                    targetDiv.style.display = 'none'
+                if (analyticsDiv.style.display != 'none')
+                    analyticsDiv.style.display = 'none'
+                if (massRegDiv.style.display != 'none')
+                    massRegDiv.style.display = 'none'
+                if (targetDiv2.style.display === 'none') {
+                    targetDiv2.style.display = 'block';
+                } else {
+                    targetDiv2.style.display = 'none';
+                }
+            });
+
+            massReg.addEventListener('click', function (event) {
+                event.preventDefault();
+                if (targetDiv1.style.display != 'none')
+                    targetDiv1.style.display = 'none'
+                if (targetDiv.style.display != 'none')
+                    targetDiv.style.display = 'none'
+                if (targetDiv2.style.display != 'none')
+                    targetDiv2.style.display = 'none'
+                if (analyticsDiv.style.display != 'none')
+                    analyticsDiv.style.display = 'none'
+                if (massRegDiv.style.display === 'none') {
+                    massRegDiv.style.display = 'block';
+                    // You can add any code related to loading or updating analytics here
+                } else {
+                    analyticsDiv.style.display = 'none';
+                }
+            });
+
+            Analytics.addEventListener('click', function (event) {
+                event.preventDefault();
+                if (targetDiv1.style.display != 'none')
+                    targetDiv1.style.display = 'none'
+                if (targetDiv.style.display != 'none')
+                    targetDiv.style.display = 'none'
+                if (targetDiv2.style.display != 'none')
+                    targetDiv2.style.display = 'none'
+                if (massRegDiv.style.display != 'none')
+                    massRegDiv.style.display = 'none'
+                if (analyticsDiv.style.display === 'none') {
+                    analyticsDiv.style.display = 'block';
+                    updateAnalyticsData();
+                    // You can add any code related to loading or updating analytics here
+                } else {
+                    analyticsDiv.style.display = 'none';
+                }
+            });
+
+            
+
+        });
+
+        function updateCandidatesList() {
+            fetch('/result')
+                .then(response => response.json())
+                .then(data => {
+                    const candidatesListDiv = document.getElementById('targetDiv1');
+                    let html = '<table class="list">';
+                    html += '<h2 class="dynamic-h2">Candidates List</h2><br><tr><th>ID</th><th>Name</th><th>Age</th><th>Sex</th><th>Area</th><th>Party</th><th>Votes</th></tr>';
+                    data.forEach(candidate => {
+                        html += `<tr><td>${candidate.id}</td><td>${candidate.name}</td><td>${candidate.age}</td><td>${candidate.sex}</td><td>${candidate.area}</td><td>${candidate.party}</td><td>${candidate.votes}%</td></tr>`;
+                    });
+                    html += '</table>';
+                    candidatesListDiv.innerHTML = html;
+                });
+        }
+
+        function updateAnalyticsData() {
+            fetch('/total_voters')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-voters').textContent = data.total_voters;
+                });
+
+            fetch('/total_candidates')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total-candidates').textContent = data.total_candidates;
+                });
+        }
+
+        function clicked() {
+            const buttonId = document.getElementById('id').value;
+            fetch('/handle_delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ buttonId }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Candidate deleted successfully');
+                        document.getElementById('id').value = '';
+                    } else {
+                        alert('Error deleting candidate');
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
